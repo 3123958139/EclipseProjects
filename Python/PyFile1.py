@@ -14,5 +14,14 @@ df.set_index('date', inplace=True)  # 将日期设为index便于画图
 dfPlot = df.ix[:, :-2]  # 画图OHLC
 if __name__ == '__main__':
     dfPlot.plot()
-    plt.title('002237')
+    plt.title('002237 plot')
     plt.savefig(path + '\\Pics\\fig1.png', dpi=75)  # 保存图片
+    plt.close()  # 关闭
+    dfPlot.hist()
+    plt.title('002237 hist')
+    plt.savefig(path + '\\Pics\\fig2.png', dpi=75)
+    plt.close()
+    dfPlot.boxplot()
+    plt.title('002237 boxplot')
+    plt.savefig(path + '\\Pics\\fig3.png', dpi=75)
+    plt.close()
