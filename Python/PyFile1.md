@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import tushare as ts
 
 
-path = 'D:\\Program Files\\eclipse-cpp-oxygen-3a-win32-x86_64\\tmp\\EclipseProjects\\Python'
+path = 'D:\\Program Files\\eclipse-cpp-oxygen-3a-win32-x86_64\\tmp\\EclipseProjects'
 
 df = ts.get_k_data('002237')  # tushare的数据接口get_k_data
 df['date'] = df['date'].apply(
@@ -18,15 +18,15 @@ dfPlot = df.ix[:, :-2]  # 画图OHLC
 if __name__ == '__main__':
     dfPlot.plot()
     plt.title('002237 plot')
-    plt.savefig(path + '\\Pics\\fig1.png', dpi=75)  # 保存图片
+    plt.savefig(path + '\\Python\\Pics\\fig1.png', dpi=75)  # 保存图片
     plt.close()  # 关闭
     dfPlot.hist()
     plt.title('002237 hist')
-    plt.savefig(path + '\\Pics\\fig2.png', dpi=75)
+    plt.savefig(path + '\\Python\\Pics\\fig2.png', dpi=75)
     plt.close()
     dfPlot.boxplot()
     plt.title('002237 boxplot')
-    plt.savefig(path + '\\Pics\\fig3.png', dpi=75)
+    plt.savefig(path + '\\Python\\Pics\\fig3.png', dpi=75)
     plt.close()
 
 ~~~
