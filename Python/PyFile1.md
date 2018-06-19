@@ -31,8 +31,8 @@ if __name__ == '__main__':
 
 ~~~
 
-> ![](/pics/fig1.png)
+> ![](/python/pics/fig1.png)
 >
-> ![](/pics/fig2.png)
+> ![](/python/pics/fig2.png)
 >
-> ![](/pics/fig3.png)
+> ![](/python/pics/fig3.png)
