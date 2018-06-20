@@ -19,6 +19,8 @@
 
 ## 开始
 
+reference book：《hands-on machine learning with scikit-learn and tensorflow》
+
 ### 机器学习基础
 
 - 机器学习的分类
@@ -61,39 +63,102 @@
   3. 用**训练集拟合模型**，找出最小损失的最优参数，用**测试集测试模型**
   4. 使用训练好的模型进行泛化推断
 
-  ~~~markdown
+  ------
+
   the main steps you will go through
-  1. Look at the big picture.
+
+  **Working with Real Data**
+
+  最好拿真实的数据做机器学习，不要用人工制造的数据集
+
+  1. **Look at the big picture.**
   - Frame the Problem
+
+  不要为了建模而建模，最好一开始就问下你老板，“预期从模型中得到什么收益？“因为这将决定后面建模的一系列步骤
+
   - Select a Performance Measure
+  选择评价指标
+
   - Check the Assumptions
-  2. Get the data.
+  列出和验证到目前为止你们所提出的所有假设前提，不当的假设很可能在早期就引起严重的问题
+
+  2. **Get the data.**
+  平常积累些能用的数据供应点
+
   - Create the Workspace
+  配置好你的工作环境
+
   - Download the Data
+  掌握些下数据的技巧
+
   - Take a Quick Look at the Data Structure
+  一览数据的结构，如*df.head()*——多少列多少行？、*df.info()*——每列的数据类型是什么？、*df.value_counts()*——分类数据的概况？、*df.describe()*——数值数据的概况？、*df.boxplot()、df.hist()*——箱线图、直方图
+
   - Create a Test Set
-  3. Discover and visualize the data to gain insights.
+  添加ID列*df.set_index()*，随机挑选20%的数据作为测试集，即80%的数据作为训练集
+
+  3. **Discover and visualize the data to gain insights.**
+  利用图表对数据做进一步的探索，为避免损害原始数据集，在备份上操作*df.copy()*
+
   - Visualizing Geographical Data
+  画散点图*df.plot(king="scatter", alpha=0.1)*
+
   - Looking for Correlations
+  画相关图*df.corr()*或相关图矩阵*pd.tools.plotting.scatter_matrix*
+
   - Experimenting with Attribute Combinations
-  4. Prepare the data for Machine Learning algorithms.
+  根据相关性做下整合
+
+  4. **Prepare the data for Machine Learning algorithms.**
   - Data Cleaning
+  缺失值、异常值要么去掉*df.dropna()*要么替换*df.replace()*
+
   - Handling Text and Categorical Attributes
+  分类变量重编码
+
   - Custom Transformers
+  自定义变换
+
   - Feature Scaling
+  各种标准化*from sklearn.preprocessing import StandardScaler*
+
   - Transformation Pipelines
-  5. Select a model and train it.
+  5. **Select a model and train it.**
   - Training and Evaluating on the Training Set
+  基于前面几步的准备工作，这一步很简单了，但需注意模型的过拟合和欠拟合问题
+
   - Better Evaluation Using Cross-Validation
-  6. Fine-tune your model.
+  使用交叉验证法进行训练和模型选择更好
+
+  6. **Fine-tune your model.**
   - Grid Search
+  网格搜索
+
   - Randomized Search
+  随机搜索，蒙特卡洛？
+
   - Ensemble Methods
+  多管齐下法
+
   - Analyze the Best Models and Their Errors
+  误差分析
+
   - Evaluate Your System on the Test Set
-  7. Present your solution.
-  8. Launch, monitor, and maintain your system.
-  ~~~
+  拿之前准备的测试集试试你的模型
+
+  7. **Present your solution.**
+
+  基于上面的结果应该可以提出一个解决方案了
+
+  8. **Launch, monitor, and maintain your system.**
+
+  现在你的机器学习系统可以上线了但是要做好监控
+
+  **Try It Out!**
+
+  干吧！
+
+  ------
 
   
 
