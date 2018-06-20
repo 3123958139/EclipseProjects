@@ -23,7 +23,7 @@ reference book：《hands-on machine learning with scikit-learn and tensorflow�
 
 ### 机器学习基础
 
-- 机器学习的分类
+- **机器学习的分类**
 
   - 训练时是否有监督
     - 有监督：分类和回归
@@ -56,7 +56,7 @@ reference book：《hands-on machine learning with scikit-learn and tensorflow�
     - 基于实例
     - 基于模型
 
-- 机器学习的标准步骤
+- **机器学习的标准步骤**
 
   1. 观察数据，将数据拆为训练集、验证集和测试集
   2. 用**验证集选择模型**
@@ -92,7 +92,7 @@ reference book：《hands-on machine learning with scikit-learn and tensorflow�
 
   - Download the Data
 
-    掌握些下数据的技巧
+    掌握些数据源和下数据的技巧
 
   - Take a Quick Look at the Data Structure
 
@@ -182,7 +182,7 @@ reference book：《hands-on machine learning with scikit-learn and tensorflow�
 
   
 
-- 机器学习的主要难点
+- **机器学习的主要难点**
 
   - 训练数据不足
     - 增加数据
@@ -204,6 +204,59 @@ reference book：《hands-on machine learning with scikit-learn and tensorflow�
     - 选择更有力或参数更多的模型
     - 使用特征工程提取更有效的特征
     - 降低模型约束
+
+- **Python数据的存储和持久化操作**
+
+Python的数据持久化操作主要是6类：普通文件、DBM文件、Pickled对象存储、Shelve对象存储、对象数据库存储、关系数据库存储，具体可参考https://www.cnblogs.com/huajiezh/p/5470770.html
+
+1. *普通文件*
+2. *DBM文件*
+3. *Pickled对象存储*
+
+~~~python
+# coding=gbk
+import pickle
+# 序列化
+table = {'a': [1, 2, 3],
+         'b': ['spam', 'eggs'],
+         'c': {'name': 'bob'}}
+print('序列化\t', table)
+mydb = open('dbase', 'wb+')  # 主要这里要求wb+以byte格式写入
+pickle.dump(table, mydb)
+# 反序列化
+mydb = open('dbase', 'rb+')  # 注意这里要rb+以byte格式读取
+table = pickle.load(mydb)
+print('反序列化\t', table)
+
+~~~
+
+> 序列化	 {'a': [1, 2, 3], 'b': ['spam', 'eggs'], 'c': {'name': 'bob'}}
+> 反序列化	 {'a': [1, 2, 3], 'b': ['spam', 'eggs'], 'c': {'name': 'bob'}}
+
+4. *Shelve对象存储*
+
+~~~python
+# -*- coding:utf-8 -*-
+import shelve
+# 存数据
+dbase = shelve.open("mydbase")
+object1 = ['The', 'bright', ('side', 'of'), ['life']]
+object2 = {'name': 'Brian', 'age': 33, 'motto': object1}
+dbase['brian'] = object2
+dbase['knight'] = {'name': 'Knight', 'motto': 'Ni!'}
+dbase.close()
+# 取数据
+dbase = shelve.open("mydbase")
+print(dbase.keys())
+print(dbase['knight'])
+dbase.close()
+~~~
+
+> KeysView(<shelve.DbfilenameShelf object at 0x0000000002924A58>)
+> {'name': 'Knight', 'motto': 'Ni!'}
+
+5. *对象数据库存储*
+6. *关系数据库存储*
 
 ### 神经网络与深度学习
 
