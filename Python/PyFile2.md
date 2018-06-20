@@ -61,6 +61,42 @@
   3. 用**训练集拟合模型**，找出最小损失的最优参数，用**测试集测试模型**
   4. 使用训练好的模型进行泛化推断
 
+  ~~~markdown
+  the main steps you will go through
+  1. Look at the big picture.
+  - Frame the Problem
+  - Select a Performance Measure
+  - Check the Assumptions
+  2. Get the data.
+  - Create the Workspace
+  - Download the Data
+  - Take a Quick Look at the Data Structure
+  - Create a Test Set
+  3. Discover and visualize the data to gain insights.
+  - Visualizing Geographical Data
+  - Looking for Correlations
+  - Experimenting with Attribute Combinations
+  4. Prepare the data for Machine Learning algorithms.
+  - Data Cleaning
+  - Handling Text and Categorical Attributes
+  - Custom Transformers
+  - Feature Scaling
+  - Transformation Pipelines
+  5. Select a model and train it.
+  - Training and Evaluating on the Training Set
+  - Better Evaluation Using Cross-Validation
+  6. Fine-tune your model.
+  - Grid Search
+  - Randomized Search
+  - Ensemble Methods
+  - Analyze the Best Models and Their Errors
+  - Evaluate Your System on the Test Set
+  7. Present your solution.
+  8. Launch, monitor, and maintain your system.
+  ~~~
+
+  
+
 - 机器学习的主要难点
 
   - 训练数据不足
