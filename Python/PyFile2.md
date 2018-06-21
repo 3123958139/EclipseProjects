@@ -26,7 +26,7 @@ reference book：《hands-on machine learning with scikit-learn and tensorflow�
 - **机器学习的分类**
 
   - 训练时是否有监督
-    - 有监督：分类和回归
+    - 有监督：分类（regression——predicting values）和回归（classification——predicting classes）
       1. k近邻
       2. 线性回归
       3. 逻辑回归
