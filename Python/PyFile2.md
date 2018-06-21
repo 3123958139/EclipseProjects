@@ -273,8 +273,6 @@ dbase.close()
 5. *对象数据库存储*
 6. *关系数据库存储*
 
-**有人做了全套汉化的文档https://blog.csdn.net/fjl_csdn?t=1**
-
 #### **分类一**：二元分类的标准流程
 
 *how to train binary classifiers？*
@@ -763,5 +761,11 @@ plt.scatter(X_reduced[:, 0], X_reduced[:, 1], c=y)
 
 ### 神经网络与深度学习
 
+------
 
+
+
+## 突然发现“[ApacheCN 组织资源](http://www.apachecn.org/)”对书全套汉化了，666，致敬！
+
+### 见https://github.com/apachecn/hands_on_Ml_with_Sklearn_and_TF
 
