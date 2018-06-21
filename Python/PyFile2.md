@@ -273,6 +273,8 @@ dbase.close()
 5. *对象数据库存储*
 6. *关系数据库存储*
 
+**有人做了全套汉化的文档https://blog.csdn.net/fjl_csdn?t=1**
+
 #### **分类一**：二元分类的标准流程
 
 *how to train binary classifiers？*
@@ -680,9 +682,84 @@ print(result)
 
 > [1]
 
-#### **随机森林**
+#### **集成学习与随机森林**
+
+- 适用场合
+  - 
+
+- 特点描述
+
+  - 把一组预测者(例如分类器或回归者)的预测汇总在一起，你通常会得到比最好的个体预测器更好的预测。一组预测器被称为集合，因此这种技术被称为**集成学习**，集成学习算法被称为**集成方法**
+
+  - **投票分类器**：有**软投票**和**硬投票**之分
+
+    ![](/pics/7_1.png)
+
+    ![](/pics/7_2.png)
+
+  - 当预测器尽可能地**相互独立**时，集成方法效果最好，获得一组不同的分类器的一种方法是使用非常不同的训练算法，正如刚才讨论的那样。另一种方法是对每个预测器使用相同的训练算法，但在训练集的不同随机子集上对它们进行训练
+
+  - 跟投票的思路不同，**Bagging and Pasting**的思路是同一算法训练多个模型，每个模型训练时只使用部分数据。如果抽样时有放回，称为Bagging，当抽样没有放回，称为Pasting。 预测时，每个模型分别给出自己的预测结果，再将这些结果**聚合**起来，预测器都可以通过不同的CPU核心甚至不同的服务器并行训练。类似地，预测可以并行进行
+
+  ![](/pics/7_3.png)
+
+  - 随机森林一般采用bagging算法训练模型 
+
+- 一个实例
+
+~~~python
+# -*- conding:utf-8 -*-
+
+from sklearn.datasets import make_moons
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+# 产生moon数据并分开训练测试集
+(X, y) = make_moons(1000, noise=0.5)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42)
+# 随机森林
+rnd_clf = RandomForestClassifier(
+    n_estimators=500, max_leaf_nodes=16, n_jobs=-1)
+rnd_clf.fit(X_train, y_train)
+y_pred_rf = rnd_clf.predict(X_test)
+print(y_pred_rf)
+
+~~~
+
+> [1 1 0 1 0 0 0 0 0 1 1 0 0 1 1 0 1 1 0 0 0 0 1 1 1 0 0 0 1 1 0 1 0 1 0 1 0
+>  1 0 0 0 1 0 0 0 0 1 1 1 0 1 1 0 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 1 1 0 1 0
+>  0 0 1 1 1 0 0 0 1 0 1 1 1 0 0 0 0 0 1 0 1 1 0 0 0 1 1 0 0 1 0 0 1 0 0 0 1
+>  1 0 0 0 1 0 0 0 1 0 1 0 0 1 0 0 0 0 1 1 1 0 1 1 0 0 0 0 0 1 0 0 1 1 1 0 1
+>  1 0 1 0 1 1 1 1 1 1 1 0 1 0 0 1 1 1 1 0 0 1 0 1 0 0 1 0 0 1 0 1 1 0 1 0 0
+>  1 1 1 1 1 1 1 1 1 0 1 0 1 0 0]
 
 #### **维度归约**
+
+- 一个实例
+
+~~~python
+# 生成Swiss roll数据
+from mpl_toolkits.mplot3d import Axes3D
+from sklearn.datasets import make_swiss_roll
+from sklearn.manifold import LocallyLinearEmbedding
+
+import matplotlib.pyplot as plt
+data = make_swiss_roll(n_samples=1000, noise=0.0, random_state=None)
+X = data[0]
+y = data[1]
+# 画3维图
+ax = plt.subplot(111, projection='3d')
+ax.scatter(X[:, 0], X[:, 1], X[:, 2], c=y)
+plt.show()
+# LLe降维
+lle = LocallyLinearEmbedding(n_components=2, n_neighbors=10)
+# 画出降为图
+X_reduced = lle.fit_transform(X)
+plt.scatter(X_reduced[:, 0], X_reduced[:, 1], c=y)
+
+~~~
+
+![](/pics/7_4.png)
 
 ### 神经网络与深度学习
 
