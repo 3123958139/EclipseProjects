@@ -271,103 +271,7 @@ dbase.close()
 5. *对象数据库存储*
 6. *关系数据库存储*
 
-- **分类一**：一个感性认识
-
-  1. 获取数据集mnist并存为shelve格式
-
-  ~~~python
-  # -*- coding:utf-8 -*-
-  
-  import shelve
-  
-  # # 下载mnist数据集
-  # from sklearn.datasets import fetch_mldata
-  # mnist = fetch_mldata('MNIST original')
-  # dbase = shelve.open('shelve_dbase')
-  # dbase['mnist'] = mnist
-  # dbase.close()
-  
-  # 读取shelve数据集
-  dbase = shelve.open('shelve_dbase')
-  mnist = dbase['mnist']
-  dbase.close()
-  print(mnist)
-  
-  ~~~
-
-  > {'DESCR': 'mldata.org dataset: mnist-original', 'COL_NAMES': ['label', 'data'], 'target': array([ 0.,  0.,  0., ...,  9.,  9.,  9.]), 'data': array([[0, 0, 0, ..., 0, 0, 0],
-  >        [0, 0, 0, ..., 0, 0, 0],
-  >        [0, 0, 0, ..., 0, 0, 0],
-  >        ..., 
-  >        [0, 0, 0, ..., 0, 0, 0],
-  >        [0, 0, 0, ..., 0, 0, 0],
-  >        [0, 0, 0, ..., 0, 0, 0]], dtype=uint8)}
-
-  2. 画个图
-
-  ~~~python
-  # -*- coding:utf-8 -*-
-  
-  import shelve
-  import matplotlib
-  import matplotlib.pyplot as plt
-  
-  path = 'D:\\Program Files\\eclipse-cpp-oxygen-3a-win32-x86_64\\tmp\\EclipseProjects\\Python\\pics\\'
-  dbase = shelve.open('shelve_dbase')
-  mnist = dbase['mnist']
-  dbase.close()
-  
-  x, y = mnist['data'], mnist['target']
-  some_digit = x[36000]
-  some_digit_image = some_digit.reshape(28, 28)
-  plt.imshow(some_digit_image, cmap=matplotlib.cm.binary,
-             interpolation='nearest')
-  plt.title('x[36000],y[36000]=' + str(y[36000]))
-  plt.axis('off')
-  plt.savefig(path + '3-1.png', dpi=75)
-  plt.close()
-  ~~~
-
-  > ![](/Python/pics/3-1.png)
-
-  3. 数据集分割成训练集和测试集
-
-  ~~~python
-  x_train, x_test, y_train, y_test = x[:60000], x[60000:], y[:60000], y[60000:]
-  ~~~
-
-  4. 训练集打乱顺序
-
-  ~~~python
-  # 训练集打乱索引
-  shuffle_index = np.random.permutation(60000)
-  x_train, y_train = x_train[shuffle_index], y_train[shuffle_index]
-  ~~~
-
-  5. 简化成二类分类问题
-
-  ~~~python
-  # 简化问题，只考虑5和非5两类
-  y_train_5 = (y_train == 5)
-  y_test_5 = (y_test == 5)
-  print(y_train_5)
-  ~~~
-
-  > [False False False ..., False False False]
-
-  6. 尝试小数据的分类与预测
-
-  ~~~python
-  # 进行小数据分类尝试
-  sgd_clf = SGDClassifier(random_state=42)
-  sgd_clf.fit(x_train, y_train_5)
-  res = sgd_clf.predict([some_digit])
-  print(res)
-  ~~~
-
-  > [ True]
-
-- **分类二**：二元分类的标准流程
+- **分类一**：二元分类的标准流程
 
   *how to train binary classifiers？*
 
@@ -385,13 +289,19 @@ dbase.close()
   
   from sklearn.datasets import fetch_mldata
   mnist = fetch_mldata('MNIST original')
+  '''
+  mnist数据集的描述：
+  70000个手写体、打了标签、数字的图片，每个图片（instance）放在一个28*28=784个特征（feature）的格子了，每个格子取色从0到255
+  '''
   dbase = shelve.open('dbase')
   dbase['mnist'] = mnist
   dbase.close()
   
   ~~~
 
-  - 读取shelve数据，数据集分割成训练集与测试集
+  **小评：对于这种结构化的数据不便于使用传统的文本文件或数据库表进行存储的可以利用shelve进行持久化处理**
+
+  - 读取shelve数据，数据集的分割
 
   ~~~python
   # -*- coding:utf-8 -*-
@@ -415,6 +325,8 @@ dbase.close()
   
   ~~~
 
+  **小评：目标集相当于给原数据打上了标签，同时需要对数据集进行分割成训练集和目标集两部分，最终应该是有2*2=4个部分的数据集合，无序的训练集需要shuffle打乱处理避免数据的打结，有序的训练集则要慎重不能随便打乱比如时间序列数据**
+
   - 二分类问题
 
   ~~~python
@@ -431,17 +343,255 @@ dbase.close()
 
   > [ True]
 
+  **小结：多分类转二分类的处理方法值得注意，在数据处理好后，一个分类文件最简单的就可以分成三步进行：选择、训练、预测**
+
   2. evaluate your classifiers using cross-validation
 
   使用交叉验证法评估你的分类器
+
+  ~~~python
+  # -*- coding:utf-8 -*-
+  import shelve
+  
+  from sklearn.base import clone
+  from sklearn.linear_model import SGDClassifier
+  from sklearn.model_selection import StratifiedKFold
+  
+  import numpy as np
+  
+  
+  dbase = shelve.open('dbase')
+  mnist = dbase['mnist']
+  dbase.close()
+  # X数据集，y目标集
+  X, y = mnist["data"], mnist["target"]
+  # 分割成训练集和测试集两部分
+  X_train, X_test, y_train, y_test = X[:60000], X[60000:], y[:60000], y[60000:]
+  # 训练集打乱顺序
+  shuffle_index = np.random.permutation(60000)
+  X_train, y_train = X_train[shuffle_index], y_train[shuffle_index]
+  # 二元分类问题
+  y_train_5 = (y_train == 5)
+  y_test_5 = (y_test == 5)
+  #############################################################################
+  # 交叉验证
+  sgd_clf = SGDClassifier(random_state=42)  # sgd分类器，random_state是随机种子数
+  skfolds = StratifiedKFold(n_splits=3, random_state=42)
+  '''
+  将训练/测试数据集划分n_splits个互斥子集，每次用其中一个子集当作验证集，剩下的n_splits-1个作为训练集，进行n_splits次训练和测试，得到n_splits个结果
+  n_splits：表示划分几等份
+  shuffle：在每次划分时，是否进行洗牌
+  ①若为Falses时，其效果等同于random_state等于整数，每次划分的结果相同
+  ②若为True时，每次划分的结果都不一样，表示经过洗牌，随机取样的
+  random_state：随机种子数
+  '''
+  for train_index, test_index in skfolds.split(X_train, y_train_5):
+      # 分类器
+      clone_clf = clone(sgd_clf)
+      # 训练集
+      X_train_folds = X_train[train_index]
+      y_train_folds = (y_train_5[train_index])
+      # 验证集
+      X_test_fold = X_train[test_index]
+      y_test_fold = (y_train_5[test_index])
+      # 训练分类器
+      clone_clf.fit(X_train_folds, y_train_folds)
+      # 分类器预测
+      y_pred = clone_clf.predict(X_test_fold)
+      # 准确率
+      n_correct = sum(y_pred == y_test_fold)
+      print(n_correct / len(y_pred))
+  
+  ~~~
+
+  > 0.9141
+  > 0.9669
+  > 0.96015
+
+  ~~~python
+  # 另一种进行交叉验证的方法，结果与上述一致
+  from sklearn.model_selection import cross_val_score
+  cross_val_score(sgd_clf, X_train, y_train_5, cv=3, scoring="accuracy")
+  ~~~
+
+  > [ 0.9141   0.9669   0.96015]
+
+  **小结：交叉验证有两种方法进行，明显第二种比较方便，但是需注意，这里的0.9141只是从精度上说明分类器的效果比较好，但是精度通常不是首选的性能度量，特别是在数据分布有偏的情况下，具体的说明见下文**
 
   3. select the precision/recall tradeoff that fits your needs
 
   根据你的需要选择合适的精度
 
+  - 分类器效果的分解
+
+  ```python
+  # -*- coding:utf-8 -*-
+  import shelve
+  from sklearn.linear_model import SGDClassifier
+  from sklearn.metrics import confusion_matrix
+  from sklearn.model_selection import cross_val_predict
+  import numpy as np
+  
+  dbase = shelve.open('dbase')
+  mnist = dbase['mnist']
+  dbase.close()
+  X, y = mnist["data"], mnist["target"]
+  X_train, X_test, y_train, y_test = X[:60000], X[60000:], y[:60000], y[60000:]
+  shuffle_index = np.random.permutation(60000)
+  X_train, y_train = X_train[shuffle_index], y_train[shuffle_index]
+  y_train_5 = (y_train == 5)
+  y_test_5 = (y_test == 5)
+  #############################################################################
+  # 混合矩阵
+  sgd_clf = SGDClassifier(random_state=42)
+  y_train_pred = cross_val_predict(sgd_clf, X_train, y_train_5, cv=3)
+  conf_matrix = confusion_matrix(y_train_5, y_train_pred)
+  print(conf_matrix)
+  
+  ```
+
+  > [[53986   593]
+  >  [ 1606  3815]]
+
+  ![](/Python/pics/confusion_matrix.png)
+
+  | 符号      | 说明                                 |
+  | --------- | ------------------------------------ |
+  | TN        | True Negative——非5并判断正确为非5    |
+  | FN        | False Negative——非5但判断错误为5     |
+  | TP        | True Positive——5并判断正确为5        |
+  | FP        | False Negative——5但判断为非5         |
+  | Precision | 预测精度$Precision=\frac{TP}{TP+FP}$ |
+  | Recall    | 真阳性比率$Recall=\frac{TP}{TP+FN}$  |
+
+  **小结：预测精度（Precision ）与真阳性比率（Recall）从各自维度评价了分类器的效果，注意二者是反向相关关系**
+
+  - 分类器性能的综合性评价指标
+
+  $$
+  F_1=\frac{2}{\frac{1}{Precision}+\frac{1}{Recall}}
+  $$
+
+  ~~~python
+  # 评价指标
+  precision = conf_matrix[1][1] / (conf_matrix[0][1] + conf_matrix[1][1])
+  recall = conf_matrix[1][1] / (conf_matrix[1][0] + conf_matrix[1][1])
+  f1_score = 2 / ((1 / precision) + (1 / recall))
+  print('precision=', precision, '\nrecall=', recall, '\nf1_score=', f1_score)
+  ~~~
+
+  > [[53978   601]
+  >  [ 2238  3183]]
+  > precision= 0.841173361522 
+  > recall= 0.587161040398 
+  > f1_score= 0.691580662683
+
+  ~~~python
+  # -*- coding:utf-8 -*-
+  import shelve
+  
+  from sklearn.linear_model import SGDClassifier
+  from sklearn.metrics import precision_recall_curve
+  from sklearn.model_selection import cross_val_predict
+  
+  import matplotlib.pyplot as plt
+  import numpy as np
+  
+  
+  dbase = shelve.open('dbase')
+  mnist = dbase['mnist']
+  dbase.close()
+  X, y = mnist["data"], mnist["target"]
+  X_train, X_test, y_train, y_test = X[:60000], X[60000:], y[:60000], y[60000:]
+  shuffle_index = np.random.permutation(60000)
+  X_train, y_train = X_train[shuffle_index], y_train[shuffle_index]
+  y_train_5 = (y_train == 5)
+  y_test_5 = (y_test == 5)
+  #############################################################################
+  # 使用decision_function决定均衡点并画图
+  sgd_clf = SGDClassifier(random_state=42)
+  y_scores = cross_val_predict(sgd_clf, X_train, y_train_5, cv=3,
+                               method="decision_function")
+  precisions, recalls, thresholds = precision_recall_curve(y_train_5, y_scores)
+  
+  p = precisions[precisions == recalls]  # 均衡点
+  
+  
+  def plot_precision_recall_vs_threshold(precisions, recalls, thresholds):
+      plt.plot(thresholds, precisions[:-1], "b--", label="Precision")
+      plt.plot(thresholds, recalls[:-1], "g-", label="Recall")
+      plt.xlabel("Threshold")
+      plt.legend(loc="upper left")
+      plt.ylim([0, 1])
+      plt.text(0, p, 'cross point is (0, ' + str(p[0]) + ')')
+  
+  
+  plot_precision_recall_vs_threshold(precisions, recalls, thresholds)
+  plt.show()
+  
+  ~~~
+
+  ![](/Python/pics/3_3.png)
+
+  **小结：可以通过F1得分和Threhold值来选择Precision和Recall的均衡点**
+
   4. compare various models using ROC curves and ROC AUC scores
 
   使用ROC和ROC AUC来选择模型
+
+  ~~~python
+  # -*- coding:utf-8 -*-
+  import shelve
+  
+  from sklearn.linear_model import SGDClassifier
+  from sklearn.metrics import precision_recall_curve
+  from sklearn.metrics import roc_auc_score
+  from sklearn.metrics import roc_curve
+  from sklearn.model_selection import cross_val_predict
+  
+  import matplotlib.pyplot as plt
+  import numpy as np
+  
+  
+  dbase = shelve.open('dbase')
+  mnist = dbase['mnist']
+  dbase.close()
+  X, y = mnist["data"], mnist["target"]
+  X_train, X_test, y_train, y_test = X[:60000], X[60000:], y[:60000], y[60000:]
+  shuffle_index = np.random.permutation(60000)
+  X_train, y_train = X_train[shuffle_index], y_train[shuffle_index]
+  y_train_5 = (y_train == 5)
+  y_test_5 = (y_test == 5)
+  #############################################################################
+  # 画ROC图
+  sgd_clf = SGDClassifier(random_state=42)
+  y_scores = cross_val_predict(sgd_clf, X_train, y_train_5, cv=3,
+                               method="decision_function")
+  fpr, tpr, thresholds = roc_curve(y_train_5, y_scores)
+  roc_area = roc_auc_score(y_train_5, y_scores) # ROC曲线的面积，越接近1越好
+  
+  
+  def plot_roc_curve(fpr, tpr, label=None):
+      plt.plot(fpr, tpr, linewidth=2, label=label)
+      plt.plot([0, 1], [0, 1], 'k--')
+      plt.axis([0, 1, 0, 1])
+      plt.xlabel('False Positive Rate')
+      plt.ylabel('True Positive Rate')
+      plt.title('the ROC area is ' + str(roc_area))
+  
+  
+  plot_roc_curve(fpr, tpr)
+  plt.show()
+  
+  ~~~
+
+  ![](/Python/pics/3_4.png)
+
+  **小结：ROC曲线用于模型的选择，分类器的ROC面积越大则越好，如下图则说明随机森林分类器要比SGD分类器更好**
+
+  ![](/Python/pics/3_5.png)
+
+- **分类**二：多元分类问题
 
 ### 神经网络与深度学习
 
