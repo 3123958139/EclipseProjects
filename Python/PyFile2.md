@@ -72,6 +72,8 @@ reference book：《hands-on machine learning with scikit-learn and tensorflow�
   最好拿真实的数据做机器学习，不要用人工制造的数据集
 
   1. **Look at the big picture.**
+  宏观一览
+
   - Frame the Problem
 
     不要为了建模而建模，最好一开始就问下你老板，“预期从模型中得到什么收益？“因为这将决定后面建模的一系列步骤
@@ -85,6 +87,8 @@ reference book：《hands-on machine learning with scikit-learn and tensorflow�
     列出和验证到目前为止你们所提出的所有假设前提，不当的假设很可能在早期就引起严重的问题
 
   2. **Get the data.**
+
+  获得数据
 
   - Create the Workspace
 
@@ -104,7 +108,7 @@ reference book：《hands-on machine learning with scikit-learn and tensorflow�
 
   3. **Discover and visualize the data to gain insights.**
 
-    利用图表对数据做进一步的探索，为避免损害原始数据集，在备份上操作*df.copy()*
+  利用图表对数据做进一步的探索，为避免损害原始数据集，在备份上操作*df.copy()*
 
   - Visualizing Geographical Data
 
@@ -119,6 +123,8 @@ reference book：《hands-on machine learning with scikit-learn and tensorflow�
     根据相关性做下整合
 
   4. **Prepare the data for Machine Learning algorithms.**
+  准备数据
+
   - Data Cleaning
 
     缺失值、异常值要么去掉*df.dropna()*要么替换*df.replace()*
@@ -136,7 +142,11 @@ reference book：《hands-on machine learning with scikit-learn and tensorflow�
     各种标准化*from sklearn.preprocessing import StandardScaler*
 
   - Transformation Pipelines
+
+    流水线
   5. **Select a model and train it.**
+  选择模型与模型训练
+
   - Training and Evaluating on the Training Set
 
     基于前面几步的准备工作，这一步很简单了，但需注意模型的过拟合和欠拟合问题
@@ -146,6 +156,8 @@ reference book：《hands-on machine learning with scikit-learn and tensorflow�
     使用交叉验证法进行训练和模型选择更好
 
   6. **Fine-tune your model.**
+  优化模型
+
   - Grid Search
 
     网格搜索
@@ -250,6 +262,7 @@ dbase = shelve.open("mydbase")
 print(dbase.keys())
 print(dbase['knight'])
 dbase.close()
+
 ~~~
 
 > KeysView(<shelve.DbfilenameShelf object at 0x0000000002924A58>)
@@ -258,7 +271,7 @@ dbase.close()
 5. *对象数据库存储*
 6. *关系数据库存储*
 
-- **分类**
+- **分类一**：一个感性认识
 
   1. 获取数据集mnist并存为shelve格式
 
@@ -353,6 +366,82 @@ dbase.close()
   ~~~
 
   > [ True]
+
+- **分类二**：二元分类的标准流程
+
+  *how to train binary classifiers？*
+
+  如何进行二元分类？
+
+  1. choose the appropriate metric for your task
+
+  为你的目标选择合适的指标
+
+  - 下载mnist数据集并持久化为shelve格式
+
+  ~~~python
+  # -*- coding:utf-8 -*-
+  import shelve
+  
+  from sklearn.datasets import fetch_mldata
+  mnist = fetch_mldata('MNIST original')
+  dbase = shelve.open('dbase')
+  dbase['mnist'] = mnist
+  dbase.close()
+  
+  ~~~
+
+  - 读取shelve数据，数据集分割成训练集与测试集
+
+  ~~~python
+  # -*- coding:utf-8 -*-
+  import shelve
+  
+  from sklearn.linear_model import SGDClassifier
+  
+  import numpy as np
+  
+  
+  dbase = shelve.open('dbase')
+  mnist = dbase['mnist']
+  dbase.close()
+  # X数据集，y目标集
+  X, y = mnist["data"], mnist["target"]
+  # 分割成训练集和测试集两部分
+  X_train, X_test, y_train, y_test = X[:60000], X[60000:], y[:60000], y[60000:]
+  # 训练集打乱顺序
+  shuffle_index = np.random.permutation(60000)
+  X_train, y_train = X_train[shuffle_index], y_train[shuffle_index]
+  
+  ~~~
+
+  - 二分类问题
+
+  ~~~python
+  # 多分类问题变二分类问题
+  y_train_5 = (y_train == 5)
+  y_test_5 = (y_test == 5)
+  # 一个简单的分类三步曲
+  sgd_clf = SGDClassifier(random_state=42)  # 1. 选择分类器
+  sgd_clf.fit(X_train, y_train_5)  # 2. 训练分类器
+  some_digit = X[36000] # 测试用的一个实例
+  pred = sgd_clf.predict([some_digit])  # 3. 分类器预测
+  print(pred)
+  ~~~
+
+  > [ True]
+
+  2. evaluate your classifiers using cross-validation
+
+  使用交叉验证法评估你的分类器
+
+  3. select the precision/recall tradeoff that fits your needs
+
+  根据你的需要选择合适的精度
+
+  4. compare various models using ROC curves and ROC AUC scores
+
+  使用ROC和ROC AUC来选择模型
 
 ### 神经网络与深度学习
 
