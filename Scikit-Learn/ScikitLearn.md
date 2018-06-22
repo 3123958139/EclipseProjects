@@ -24,17 +24,27 @@
 
 ------
 
-## 机器学习过程
+## Machine Learning Project Checklist
 
-### 1. 准备数据
+This checklist can guide you through your Machine Learning projects. There are eight main steps:
 
-### 2. 选择模型
+### 1. Frame the problem and look at the big picture.
 
-### 3. 训练模型
+### 2. Get the data.
 
-### 4. 模型预测
+### 3. Explore the data to gain insights.
 
-### 5. 优化模型
+### 4. Prepare the data to better expose the underlying data patterns to Machine Learning algorithms.
+
+### 5. Explore many different models and short-list the best ones.
+
+### 6. Fine-tune your models and combine them into a great solution.
+
+### 7. Present your solution.
+
+### 8. Launch, monitor, and maintain your system.
+
+Obviously, you should feel free to adapt this checklist to your needs.
 
 ------
 
@@ -46,37 +56,22 @@
 
 ~~~python
 # -*- coding:utf-8 -*-
-from sklearn import datasets
-from sklearn import svm
 from sklearn.svm import SVC
-
 import numpy as np
-# 1. 数据准备datasets
-iris = datasets.load_iris()
-digits = datasets.load_digits()
-# 2. 模型选择svm
-clf = svm.SVC(gamma=0.001, C=100.)
-# 3. 训练模型fit
-clf.fit(digits.data[:-1], digits.target[:-1])
-# 4. 模型预测predict
-clf.predict(digits.data[-1:])
-# 5. 模型优化set_params
+# 数据准备
 rng = np.random.RandomState(0)
 X = rng.rand(100, 10)
 y = rng.binomial(1, 0.5, 100)
 X_test = rng.rand(5, 10)
+# 选择SVM模型
 clf = SVC()
+# 训练带参数优化的模型
 clf.set_params(kernel='linear').fit(X, y)  # 线性核
-SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
-    decision_function_shape=None, degree=3, gamma='auto', kernel='linear',
-    max_iter=-1, probability=False, random_state=None, shrinking=True,
-    tol=0.001, verbose=False)
+# 拿训练好的模型进行预测
 clf.predict(X_test)
+# 训练带参数优化的模型
 clf.set_params(kernel='rbf').fit(X, y)  # rbf核
-SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
-    decision_function_shape=None, degree=3, gamma='auto', kernel='rbf',
-    max_iter=-1, probability=False, random_state=None, shrinking=True,
-    tol=0.001, verbose=False)
+# 拿训练好的模型进行预测
 clf.predict(X_test)
 
 ~~~
