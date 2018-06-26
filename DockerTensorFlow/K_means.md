@@ -16,6 +16,8 @@
 
 ### *K-means（K均值）*
 
+![](K_means.png)
+
 ~~~python
 # coding:utf-8
 import time

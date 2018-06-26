@@ -1,4 +1,5 @@
 # coding:utf-8
+import os
 import time
 from sklearn.datasets.samples_generator import make_blobs
 import matplotlib.pyplot as plt
@@ -96,6 +97,7 @@ with graph.as_default() as g:
     colourindexes = [2, 1, 4, 3]
     start = time.time()  # 计时器开始
     while changed and iters < MAX_ITERS:
+        writer = tf.summary.FileWriter('K_means', sess.graph)
         fig, ax = plt.subplots()
         iters += 1
         [changed, _] = sess.run([did_assignments_change,  # 这个控制迭代效果是否达到要求
@@ -118,6 +120,8 @@ with graph.as_default() as g:
         plt.draw()
         plt.pause(5)
         plt.close(fig)
+    writer.close()
+    sess.close()
     end = time.time()  # 计时器结束
 #=========================================================================
 #
@@ -125,3 +129,10 @@ with graph.as_default() as g:
 print("Found in %.2f seconds" % (end - start)), iters, "iterations"
 print("Centroids:\n", centers)
 print("Cluster assignments:\n", assignments)
+#=========================================================================
+#
+#=========================================================================
+os.system('explorer .')  # 打开文件夹
+os.system('start C:\\Users\\dengchaohai\\AppData\\Local\\Google\\Chrome' +
+          '\\Application\\chrome.exe http://localhost:6006')  # 打开tensorboard网址
+os.system('tensorboard --logdir=K_means')  # 运行tensorboard
